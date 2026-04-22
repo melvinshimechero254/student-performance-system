@@ -28,7 +28,8 @@ from auth_service import ensure_schema, get_user_by_id, register_user, verify_us
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "student_performance_model.pkl")
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "student_performance_model.pkl")
 OUTPUT_PATH = os.path.join(BASE_DIR, "predicted_results.csv")
 OUTPUTS_DIR = os.path.join(BASE_DIR, "outputs")
 os.makedirs(OUTPUTS_DIR, exist_ok=True)
