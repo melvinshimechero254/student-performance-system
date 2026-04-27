@@ -52,6 +52,7 @@
       {% if current_is_admin %}
       <a class="btn btn-sm btn-warning" href="{{ url_for('admin_page') }}">Admin</a>
       {% endif %}
+      <a class="btn btn-sm btn-outline-light" href="{{ url_for('change_password_page') }}">Change Password</a>
       <button class="btn btn-sm btn-outline-info" type="button" onclick="showApiKey()">My API Key</button>
       <button class="btn btn-sm btn-light" type="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
       <a class="btn btn-sm btn-outline-light" href="{{ url_for('logout') }}">Log out</a>
@@ -73,6 +74,16 @@
         <input type="number" id="final"        class="form-control mb-2" placeholder="Final Exam Score">
 
         <button class="btn btn-primary w-100 mb-3" onclick="predict()">Predict</button>
+
+        <hr>
+
+        <h5>Multi-Subject Prediction</h5>
+        <input type="number" id="multiAttendance" class="form-control mb-2" placeholder="Attendance (%)">
+        <div id="subjectRows" class="mb-2"></div>
+        <div class="d-flex gap-2 mb-2">
+          <button class="btn btn-outline-primary btn-sm" type="button" onclick="addSubjectRow()">Add Subject</button>
+          <button class="btn btn-outline-secondary btn-sm" type="button" onclick="predictMultiSubject()">Predict Multi-Subject</button>
+        </div>
 
         <hr>
 
@@ -104,6 +115,7 @@
           <div id="explainabilityPanel" class="small text-secondary">Loading...</div>
         </div>
         <div id="bulkResult" class="mt-3"></div>
+        <div id="multiSubjectResult" class="mt-3"></div>
 
       </div>
     </div>
@@ -205,6 +217,96 @@ function predict() {
     })
     .catch(() => {
       resultEl.innerHTML = '<span class="text-danger">Server error. Try again.</span>';
+    });
+}
+
+function addSubjectRow(defaults) {
+  const host = document.getElementById("subjectRows");
+  const idx = host.children.length + 1;
+  const row = document.createElement("div");
+  row.className = "border rounded p-2 mb-2";
+  row.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <small class="text-secondary">Subject ${idx}</small>
+      <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.border').remove()">Remove</button>
+    </div>
+    <input type="text" class="form-control form-control-sm mb-2 subject-name" placeholder="Subject name" value="${(defaults && defaults.subject) || ""}">
+    <div class="row g-2">
+      <div class="col-4"><input type="number" class="form-control form-control-sm subject-cat" placeholder="CAT" value="${(defaults && defaults.cat) || ""}"></div>
+      <div class="col-4"><input type="number" class="form-control form-control-sm subject-assignment" placeholder="Assignment" value="${(defaults && defaults.assignment) || ""}"></div>
+      <div class="col-4"><input type="number" class="form-control form-control-sm subject-final" placeholder="Final" value="${(defaults && defaults.finalExam) || ""}"></div>
+    </div>
+  `;
+  host.appendChild(row);
+}
+
+function predictMultiSubject() {
+  const attendance = document.getElementById("multiAttendance").value;
+  const resultDiv = document.getElementById("multiSubjectResult");
+  const rows = [...document.querySelectorAll("#subjectRows > div")];
+  if (!attendance || rows.length === 0) {
+    resultDiv.innerHTML = '<span class="text-danger">Enter attendance and at least one subject.</span>';
+    return;
+  }
+  const subjects = [];
+  for (const row of rows) {
+    const subject = row.querySelector(".subject-name").value || "Subject";
+    const cat = row.querySelector(".subject-cat").value;
+    const assignment = row.querySelector(".subject-assignment").value;
+    const finalExam = row.querySelector(".subject-final").value;
+    if (!cat || !assignment || !finalExam) {
+      resultDiv.innerHTML = '<span class="text-danger">Fill all CAT/Assignment/Final scores for every subject.</span>';
+      return;
+    }
+    subjects.push({
+      subject: subject,
+      CAT_Score: Number(cat),
+      Assignment_Score: Number(assignment),
+      Final_Exam: Number(finalExam)
+    });
+  }
+  resultDiv.innerHTML = '<div class="spinner-border text-primary"></div><p>Predicting multi-subject outcome…</p>';
+  fetch("/predict/multi-subject", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify({ Attendance: Number(attendance), subjects: subjects }),
+  })
+    .then(redirectIfUnauthorized)
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        resultDiv.innerHTML = `<span class="text-danger">${data.error}</span>`;
+        return;
+      }
+      const badge = data.prediction === "Pass"
+        ? '<span class="badge bg-success">PASS</span>'
+        : '<span class="badge bg-danger">FAIL</span>';
+      const tableRows = (data.subjects || []).map(s => `
+        <tr>
+          <td>${s.subject}</td>
+          <td>${s.CAT_Score}</td>
+          <td>${s.Assignment_Score}</td>
+          <td>${s.Final_Exam}</td>
+          <td>${s.weighted_total}</td>
+        </tr>
+      `).join("");
+      resultDiv.innerHTML = `
+        <div class="alert alert-info py-2 mb-2">
+          Overall Multi-Subject Prediction: ${badge}
+          <br>Confidence: <strong>${data.confidence}%</strong>
+          <br><small>${data.note || ""}</small>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead><tr><th>Subject</th><th>CAT</th><th>Assignment</th><th>Final</th><th>Weighted</th></tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      `;
+    })
+    .catch(() => {
+      resultDiv.innerHTML = '<span class="text-danger">Multi-subject request failed.</span>';
     });
 }
 
@@ -357,6 +459,8 @@ function showApiKey() {
 }
 
 loadExplainability();
+addSubjectRow({ subject: "Math" });
+addSubjectRow({ subject: "English" });
 </script>
 
 </body>

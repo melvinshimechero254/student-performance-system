@@ -31,6 +31,11 @@
                  pattern="[a-zA-Z0-9_]{3,32}" title="3–32 characters: letters, numbers, underscore">
         </div>
         <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" name="email" type="email" autocomplete="email" required>
+          <div class="form-text">Used for password reset and email-based login.</div>
+        </div>
+        <div class="mb-3">
           <label class="form-label" for="password">Password</label>
           <input class="form-control" id="password" name="password" type="password" autocomplete="new-password" required
                  minlength="8">

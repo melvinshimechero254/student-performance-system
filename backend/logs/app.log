@@ -119,3 +119,486 @@
 2026-04-09 13:15:08,008 INFO {'event': 'logout', 'user_id': 1}
 2026-04-09 13:15:17,369 INFO {'event': 'login_success', 'user_id': 1, 'username': 'Melvin'}
 2026-04-22 13:16:42,031 INFO {'event': 'register_success', 'user_id': 6, 'username': 'Kegode'}
+2026-04-27 11:19:46,789 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:47,210 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:47,320 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:19:47,635 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:47,977 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:48,328 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:48,647 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 11:19:48,679 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:49,335 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 11:19:49,358 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:49,986 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 11:19:50,024 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:50,330 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 11:19:50,353 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 11:19:51,947 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:52,070 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 11:19:52,936 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:19:53,293 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:19:53,314 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:53,596 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:19:53,963 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:19:53,982 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:54,275 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:19:54,863 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:19:54,881 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 11:19:54,893 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:55,180 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:19:55,510 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:19:56,671 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 11:19:56,681 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:57,259 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:19:57,581 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:19:57,629 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:57,637 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:19:57,662 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:19:57,947 INFO {'event': 'password_reset_success'}
+2026-04-27 11:19:58,249 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:19:58,578 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:19:58,610 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:58,899 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 11:19:59,188 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:19:59,198 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 11:19:59,224 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:19:59,796 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 11:20:00,198 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 11:20:00,271 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:21:12,171 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:12,428 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:12,495 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:21:12,672 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:12,871 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:13,072 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:13,271 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 11:21:13,280 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:13,610 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 11:21:13,622 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:13,957 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 11:21:13,986 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:14,137 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 11:21:14,150 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 11:21:14,486 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:14,537 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 11:21:15,156 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:21:15,369 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:21:15,371 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:15,521 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:21:15,750 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:21:15,763 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:15,923 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:21:16,239 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:21:16,254 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 11:21:16,254 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:16,413 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:21:16,605 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:21:17,227 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 11:21:17,233 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:17,537 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:21:17,746 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:21:17,754 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:17,771 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:21:17,782 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:21:17,937 INFO {'event': 'password_reset_success'}
+2026-04-27 11:21:18,088 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:21:18,287 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:21:18,302 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:18,466 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 11:21:18,621 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:21:18,633 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 11:21:18,637 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:21:18,987 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 11:21:19,206 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 11:21:19,238 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:23:25,781 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:26,027 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:26,091 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:23:26,274 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:26,466 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:26,674 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:26,871 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 11:23:26,885 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:27,217 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 11:23:27,236 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:27,585 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 11:23:27,613 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:27,766 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 11:23:27,774 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 11:23:28,083 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:28,150 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 11:23:28,779 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:23:28,983 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:23:28,995 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:29,149 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:23:29,352 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:23:29,364 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:29,519 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:23:29,829 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:23:29,833 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 11:23:29,843 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:29,991 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:23:30,167 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:23:30,783 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 11:23:30,784 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:31,091 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:23:31,266 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:23:31,283 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:31,300 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:23:31,312 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:23:31,462 INFO {'event': 'password_reset_success'}
+2026-04-27 11:23:31,618 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:23:31,799 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:23:31,816 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:31,988 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 11:23:32,142 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:23:32,155 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 11:23:32,166 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:23:32,502 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 11:23:32,711 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 11:23:32,752 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:26:03,172 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:03,414 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:03,472 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:26:03,656 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:03,856 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:04,075 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:04,281 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 11:26:04,297 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:04,639 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 11:26:04,655 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:05,005 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 11:26:05,025 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:05,192 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 11:26:05,207 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 11:26:05,529 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:05,588 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 11:26:06,240 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:26:06,451 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:26:06,457 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:06,619 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:26:06,838 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:26:06,848 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:07,000 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:26:07,323 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:26:07,333 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 11:26:07,338 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:07,507 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:26:07,706 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:26:08,349 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 11:26:08,355 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:08,672 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:26:08,857 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:26:08,874 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:08,890 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:26:08,897 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:26:09,064 INFO {'event': 'password_reset_success'}
+2026-04-27 11:26:09,221 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:26:09,407 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:26:09,423 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:09,597 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 11:26:09,750 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:26:09,761 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 11:26:09,775 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:26:10,122 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 11:26:10,393 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 11:26:10,446 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:32:02,616 INFO {'event': 'register_success', 'user_id': 7, 'username': 'victorwanyama'}
+2026-04-27 11:41:47,449 INFO {'event': 'register_success', 'user_id': 8, 'username': 'Lecturer1'}
+2026-04-27 11:48:50,209 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:50,448 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:50,503 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 11:48:50,674 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:50,871 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:51,085 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:51,275 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 11:48:51,290 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:51,635 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 11:48:51,643 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:51,983 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 11:48:52,004 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:52,171 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 11:48:52,174 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 11:48:52,491 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:52,555 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 11:48:53,201 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 11:48:53,392 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:48:53,409 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:53,559 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 11:48:53,767 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:48:53,776 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:53,936 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:48:54,258 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 11:48:54,258 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 11:48:54,274 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:54,426 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 11:48:54,617 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:48:55,225 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 11:48:55,237 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:55,542 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 11:48:55,731 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:48:55,741 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:55,758 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:48:55,775 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 11:48:55,933 INFO {'event': 'password_reset_success'}
+2026-04-27 11:48:56,094 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 11:48:56,277 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:48:56,294 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:56,458 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 11:48:56,613 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 11:48:56,622 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 11:48:56,635 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 11:48:56,991 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 11:48:57,298 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 11:48:57,355 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 12:05:32,482 INFO {'event': 'register_success', 'user_id': 1, 'username': 'Lecture1'}
+2026-04-27 12:07:17,766 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 12:07:46,926 INFO {'event': 'register_success', 'user_id': 2, 'username': 'Student1'}
+2026-04-27 12:08:16,504 INFO {'event': 'login_success', 'user_id': 1, 'username': 'Lecture1'}
+2026-04-27 12:08:25,949 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 12:08:32,172 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 12:08:52,815 INFO {'event': 'login_success', 'user_id': 2, 'username': 'Student1'}
+2026-04-27 12:44:18,891 INFO {'event': 'login_success', 'user_id': 2, 'username': 'Student1'}
+2026-04-27 12:44:35,013 INFO {'event': 'logout', 'user_id': 2}
+2026-04-27 12:44:51,553 INFO {'event': 'password_reset_requested', 'identifier': 'Student1'}
+2026-04-27 12:45:36,878 INFO {'event': 'password_reset_requested', 'identifier': 'Student1'}
+2026-04-27 12:47:26,815 INFO {'event': 'login_success', 'user_id': 2, 'username': 'Student1'}
+2026-04-27 16:17:59,111 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:17:59,246 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:17:59,277 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 16:17:59,387 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:17:59,494 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:17:59,594 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:17:59,711 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 16:17:59,711 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:17:59,963 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 16:17:59,972 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:00,180 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 16:18:00,197 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:00,281 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 16:18:00,281 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 16:18:00,480 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:18:00,515 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 16:18:01,004 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:18:01,110 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 16:18:01,127 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:01,213 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 16:18:01,347 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 16:18:01,347 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:01,430 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 16:18:01,594 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 16:18:01,610 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 16:18:01,610 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:01,765 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 16:18:01,929 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 16:18:02,263 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 16:18:02,263 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:02,440 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 16:18:02,547 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 16:18:02,563 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:02,580 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 16:18:02,589 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 16:18:02,713 INFO {'event': 'password_reset_success'}
+2026-04-27 16:18:02,797 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 16:18:02,910 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 16:18:02,913 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:02,996 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 16:18:03,097 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 16:18:03,097 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 16:18:03,097 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:03,346 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 16:18:03,495 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 16:18:03,514 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 16:18:03,630 INFO {'event': 'register_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 16:18:03,630 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:03,724 INFO {'event': 'login_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 16:18:03,837 INFO {'event': 'register_success', 'user_id': 1, 'username': 'userone'}
+2026-04-27 16:18:03,845 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:18:04,052 INFO {'event': 'register_success', 'user_id': 1, 'username': 'multisub'}
+2026-04-27 16:18:04,096 INFO {'event': 'multi_subject_prediction', 'user_id': 1, 'subject_count': 3, 'prediction': 'Pass', 'confidence': 98.0}
+2026-04-27 16:22:47,299 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:47,449 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:47,483 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 16:22:47,599 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:47,698 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:47,815 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:47,932 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 16:22:47,951 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:48,238 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 16:22:48,250 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:48,434 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 16:22:48,451 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:48,534 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 16:22:48,551 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 16:22:48,734 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:48,775 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 16:22:49,248 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:22:49,370 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 16:22:49,370 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:49,449 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 16:22:49,565 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 16:22:49,582 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:49,665 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 16:22:49,815 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 16:22:49,832 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 16:22:49,832 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:49,915 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 16:22:50,048 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 16:22:50,418 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 16:22:50,418 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:50,565 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 16:22:50,681 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 16:22:50,681 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:50,698 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 16:22:50,714 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser'}
+2026-04-27 16:22:50,834 INFO {'event': 'password_reset_success'}
+2026-04-27 16:22:50,932 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 16:22:51,031 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 16:22:51,048 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:51,130 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 16:22:51,215 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 16:22:51,215 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 16:22:51,215 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:51,464 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 16:22:51,598 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 16:22:51,615 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 16:22:51,715 INFO {'event': 'register_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 16:22:51,715 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:51,798 INFO {'event': 'login_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 16:22:51,913 INFO {'event': 'register_success', 'user_id': 1, 'username': 'userone'}
+2026-04-27 16:22:51,915 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:22:52,098 INFO {'event': 'register_success', 'user_id': 1, 'username': 'multisub'}
+2026-04-27 16:22:52,147 INFO {'event': 'multi_subject_prediction', 'user_id': 1, 'subject_count': 3, 'prediction': 'Pass', 'confidence': 98.0}
+2026-04-27 16:25:35,192 INFO {'event': 'register_success', 'user_id': 3, 'username': 'Student2'}
+2026-04-27 16:26:13,668 INFO {'event': 'login_success', 'user_id': 1, 'username': 'Lecture1'}
+2026-04-27 16:26:23,215 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 3}
+2026-04-27 16:26:27,258 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:27:01,528 INFO {'event': 'login_success', 'user_id': 3, 'username': 'Student2'}
+2026-04-27 16:27:40,995 INFO {'event': 'logout', 'user_id': 3}
+2026-04-27 16:28:04,472 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com'}
+2026-04-27 16:34:26,522 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:26,678 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:26,705 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 16:34:26,821 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:26,921 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:27,067 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:27,206 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 16:34:27,207 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:27,471 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 16:34:27,485 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:27,683 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 16:34:27,701 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:27,848 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 16:34:27,854 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 16:34:28,038 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:28,071 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 16:34:28,491 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 16:34:28,622 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 16:34:28,626 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:28,707 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 16:34:28,842 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 16:34:28,842 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:28,923 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 16:34:29,108 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 16:34:29,108 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 16:34:29,122 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:29,190 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 16:34:29,327 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 16:34:29,738 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 16:34:29,755 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:29,921 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 16:34:30,069 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 16:34:30,080 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:30,091 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser', 'recipient_email': 'resetuser@example.com'}
+2026-04-27 16:34:30,106 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser', 'recipient_email': 'resetuser@example.com'}
+2026-04-27 16:34:30,204 INFO {'event': 'password_reset_success'}
+2026-04-27 16:34:30,288 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 16:34:30,387 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 16:34:30,404 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:30,487 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 16:34:30,570 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 16:34:30,572 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 16:34:30,572 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:30,773 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 16:34:30,963 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 16:34:30,984 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 16:34:31,088 INFO {'event': 'register_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 16:34:31,088 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:31,171 INFO {'event': 'login_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 16:34:31,278 INFO {'event': 'register_success', 'user_id': 1, 'username': 'userone'}
+2026-04-27 16:34:31,285 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 16:34:31,489 INFO {'event': 'register_success', 'user_id': 1, 'username': 'multisub'}
+2026-04-27 16:34:31,557 INFO {'event': 'multi_subject_prediction', 'user_id': 1, 'subject_count': 3, 'prediction': 'Pass', 'confidence': 98.0}
+2026-04-27 22:50:46,322 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:46,579 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:46,638 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 22:50:46,816 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:47,011 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:47,278 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:47,512 INFO {'event': 'register_success', 'user_id': 1, 'username': 'alice'}
+2026-04-27 22:50:47,519 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:47,861 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bob'}
+2026-04-27 22:50:47,867 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:48,280 INFO {'event': 'register_success', 'user_id': 1, 'username': 'bootstrapadmin'}
+2026-04-27 22:50:48,298 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:48,474 INFO {'event': 'register_success', 'user_id': 2, 'username': 'plainuser'}
+2026-04-27 22:50:48,486 INFO {'event': 'logout', 'user_id': None}
+2026-04-27 22:50:48,816 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:48,865 INFO {'event': 'single_prediction', 'user_id': 1, 'prediction': 'Pass', 'confidence': 100.0}
+2026-04-27 22:50:49,725 INFO {'event': 'register_success', 'user_id': 1, 'username': 'testuser'}
+2026-04-27 22:50:49,922 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 22:50:49,939 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:50,088 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminuser'}
+2026-04-27 22:50:50,316 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 22:50:50,333 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:50,509 INFO {'event': 'register_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 22:50:50,899 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminseed'}
+2026-04-27 22:50:50,915 INFO {'event': 'admin_approve_user', 'actor': 1, 'target': 2}
+2026-04-27 22:50:50,915 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:51,080 INFO {'event': 'login_success', 'user_id': 2, 'username': 'pendinguser'}
+2026-04-27 22:50:51,259 INFO {'event': 'register_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 22:50:51,966 INFO {'event': 'password_changed', 'user_id': 1}
+2026-04-27 22:50:51,966 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:52,282 INFO {'event': 'login_success', 'user_id': 1, 'username': 'changepass'}
+2026-04-27 22:50:52,465 INFO {'event': 'register_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 22:50:52,485 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:52,503 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser@example.com', 'recipient_email': 'resetuser@example.com'}
+2026-04-27 22:50:52,516 INFO {'event': 'password_reset_requested', 'identifier': 'resetuser', 'recipient_email': 'resetuser@example.com'}
+2026-04-27 22:50:52,714 INFO {'event': 'password_reset_success'}
+2026-04-27 22:50:53,046 INFO {'event': 'login_success', 'user_id': 1, 'username': 'resetuser'}
+2026-04-27 22:50:53,243 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 22:50:53,248 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:53,435 INFO {'event': 'register_success', 'user_id': 2, 'username': 'rejectme'}
+2026-04-27 22:50:53,651 INFO {'event': 'login_success', 'user_id': 1, 'username': 'adminfirst'}
+2026-04-27 22:50:53,657 INFO {'event': 'admin_reject_user', 'actor': 1, 'target': 2}
+2026-04-27 22:50:53,665 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:54,029 INFO {'event': 'register_success', 'user_id': 1, 'username': 'adminuser2'}
+2026-04-27 22:50:54,348 INFO {'event': 'register_success', 'user_id': 1, 'username': 'apikeyuser'}
+2026-04-27 22:50:54,388 INFO {'event': 'api_prediction', 'user_id': 1, 'prediction': 'At Risk', 'confidence': 69.0}
+2026-04-27 22:50:54,567 INFO {'event': 'register_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 22:50:54,582 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:54,730 INFO {'event': 'login_success', 'user_id': 1, 'username': 'mailuser'}
+2026-04-27 22:50:54,923 INFO {'event': 'register_success', 'user_id': 1, 'username': 'userone'}
+2026-04-27 22:50:54,939 INFO {'event': 'logout', 'user_id': 1}
+2026-04-27 22:50:55,332 INFO {'event': 'register_success', 'user_id': 1, 'username': 'multisub'}
+2026-04-27 22:50:55,381 INFO {'event': 'multi_subject_prediction', 'user_id': 1, 'subject_count': 3, 'prediction': 'Pass', 'confidence': 98.0}
+2026-04-27 23:38:35,061 INFO {'event': 'login_success', 'user_id': 3, 'username': 'Student2'}
+2026-04-27 23:38:48,856 INFO {'event': 'logout', 'user_id': 3}
+2026-04-27 23:40:13,221 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': '[Errno 11001] getaddrinfo failed'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': '[Errno 11001] getaddrinfo failed'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': '[Errno 11001] getaddrinfo failed'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': '[Errno 11001] getaddrinfo failed'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': '[Errno 11001] getaddrinfo failed'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': '[Errno 11001] getaddrinfo failed'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 00:34:53,257 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 01:20:11,330 INFO {'event': 'login_success', 'user_id': 3, 'username': 'Student2'}
+2026-04-28 01:20:14,275 INFO {'event': 'logout', 'user_id': 3}
+2026-04-28 01:20:49,554 INFO {'event': 'password_reset_email_failed', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com', 'error': 'Connection unexpectedly closed: timed out'}
+2026-04-28 01:20:49,555 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}
+2026-04-28 01:53:37,526 INFO {'event': 'password_reset_requested', 'identifier': 'jodephmelvin617@gmail.com', 'recipient_email': 'jodephmelvin617@gmail.com'}

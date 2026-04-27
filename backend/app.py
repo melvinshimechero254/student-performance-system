@@ -4,14 +4,19 @@ import os
 import secrets
 import sqlite3
 import time
+import io
+import smtplib
+import ssl
 from datetime import datetime, timezone
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 import logging
+from email.message import EmailMessage
 
 import joblib
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 from flask import (
     Flask,
     jsonify,
@@ -23,7 +28,19 @@ from flask import (
     url_for,
 )
 
-from auth_service import ensure_schema, get_user_by_id, register_user, verify_user
+from auth_service import (
+    change_password,
+    ensure_schema,
+    get_user_by_id,
+    is_user_approved,
+    register_user,
+    request_password_reset,
+    reset_password_with_token,
+    verify_user,
+)
+
+# Load environment variables from project-root .env for local/dev runs.
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
 
 app = Flask(__name__)
 
@@ -79,6 +96,9 @@ def _ensure_user_flags() -> None:
         if "is_active" not in cols:
             conn.execute("ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1")
             conn.commit()
+        if "is_approved" in cols:
+            conn.execute("UPDATE users SET is_approved = 1 WHERE is_admin = 1 AND is_approved = 0")
+            conn.commit()
 
 
 @app.before_request
@@ -132,6 +152,58 @@ def _current_user() -> dict | None:
 def _log_event(event: str, **fields) -> None:
     payload = {"event": event, **fields}
     logger.info(str(payload))
+
+
+def _should_expose_reset_link() -> bool:
+    return bool(app.config.get("TESTING")) or os.environ.get("SHOW_RESET_LINKS", "0") == "1"
+
+
+def _send_password_reset_email(recipient_email: str, reset_url: str) -> bool:
+    smtp_host = os.environ.get("SMTP_HOST", "").strip()
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    smtp_user = os.environ.get("SMTP_USER", "").strip()
+    smtp_password = os.environ.get("SMTP_PASSWORD", "")
+    smtp_sender = os.environ.get("SMTP_SENDER", smtp_user).strip()
+    smtp_use_ssl = os.environ.get("SMTP_USE_SSL", "0") == "1"
+    smtp_use_starttls = os.environ.get("SMTP_USE_STARTTLS", "1") == "1"
+    if not smtp_host or not smtp_sender:
+        return False
+
+    msg = EmailMessage()
+    msg["Subject"] = "Password reset instructions"
+    msg["From"] = smtp_sender
+    msg["To"] = recipient_email
+    msg.set_content(
+        "A password reset was requested for your account.\n\n"
+        f"Use this link to reset your password:\n{reset_url}\n\n"
+        "If you did not request this, you can ignore this email."
+    )
+
+    context = ssl.create_default_context()
+    try:                                          # ← ADD THIS
+        if smtp_use_ssl:
+            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10, context=context) as smtp:
+                if smtp_user:
+                    smtp.login(smtp_user, smtp_password)
+                smtp.send_message(msg)
+        else:
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as smtp:
+                if smtp_use_starttls:
+                    smtp.starttls(context=context)
+                if smtp_user:
+                    smtp.login(smtp_user, smtp_password)
+                smtp.send_message(msg)
+        return True
+    except Exception as exc:                      # ← ADD THIS
+        app.logger.error("SMTP send failed: %s", exc)
+        return False
+
+
+def _write_reset_link_log(recipient_email: str, reset_url: str) -> None:
+    log_path = os.path.join(LOGS_DIR, "password_reset_links.log")
+    stamp = datetime.now(UTC).isoformat()
+    with open(log_path, "a", encoding="utf-8") as fh:
+        fh.write(f"{stamp} recipient={recipient_email} reset_url={reset_url}\n")
 
 
 def _store_prediction(
@@ -299,7 +371,7 @@ def admin_required_page(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
         u = _current_user()
-        if u and u["is_admin"] and session.get("admin_authenticated"):
+        if u and u["is_admin"]:
             return view(*args, **kwargs)
         return render_template("forbidden.html"), 403
 
@@ -312,17 +384,18 @@ def login():
         dest = _safe_next_url(request.args.get("next")) or url_for("home")
         return redirect(dest)
     next_url = request.args.get("next", "")
+    ui_message = request.args.get("message", "")
     if request.method == "POST":
         if not _require_csrf():
             return render_template("login.html", error="Security check failed. Refresh and try again.", next_url=next_url), 400
         ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown")
         if not _rate_limit((ip, "login"), limit=10, window_s=60):
             return render_template("login.html", error="Too many attempts. Please wait a minute.", next_url=next_url), 429
-        username = request.form.get("username", "")
+        identifier = request.form.get("identifier", "") or request.form.get("username", "")
         password = request.form.get("password", "")
         next_url = request.form.get("next", "") or ""
         admin_login = request.form.get("login_mode") == "admin"
-        verified = verify_user(_db_path(), username, password)
+        verified = verify_user(_db_path(), identifier, password)
         if verified is None:
             return render_template(
                 "login.html",
@@ -330,6 +403,13 @@ def login():
                 next_url=next_url,
             )
         user_id, canonical_name, is_admin = verified
+        if not is_user_approved(_db_path(), int(user_id)):
+            return render_template(
+                "login.html",
+                error="Your account is pending admin approval.",
+                next_url=next_url,
+                message="Ask an administrator to approve your account.",
+            ), 403
         if admin_login and not bool(is_admin):
             return render_template(
                 "login.html",
@@ -347,7 +427,7 @@ def login():
         _log_event("login_success", user_id=user_id, username=canonical_name)
         dest = _safe_next_url(next_url) or url_for("home")
         return redirect(dest)
-    return render_template("login.html", next_url=next_url)
+    return render_template("login.html", next_url=next_url, message=ui_message)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -361,15 +441,20 @@ def register():
         if not _rate_limit((ip, "register"), limit=6, window_s=60):
             return render_template("register.html", error="Too many attempts. Please wait a minute."), 429
         username = request.form.get("username", "")
+        email = request.form.get("email", "")
         password = request.form.get("password", "")
-        ok, msg, user_id, canonical = register_user(_db_path(), username, password)
+        ok, msg, user_id, canonical = register_user(_db_path(), username, password, email)
         if not ok:
             return render_template("register.html", error=msg)
         session["user_id"] = user_id
         session["username"] = canonical or username.strip()
+        approved = is_user_approved(_db_path(), int(user_id))
         session["is_admin"] = False
         session["admin_authenticated"] = False
         _log_event("register_success", user_id=user_id, username=session["username"])
+        if not approved:
+            session.clear()
+            return redirect(url_for("login", message="Registration complete. Account pending admin approval."))
         return redirect(url_for("home"))
     return render_template("register.html")
 
@@ -379,6 +464,82 @@ def logout():
     _log_event("logout", user_id=session.get("user_id"))
     session.clear()
     return redirect(url_for("login"))
+
+
+@app.route("/change-password", methods=["GET", "POST"])
+@login_required_page
+def change_password_page():
+    if request.method == "POST":
+        if not _require_csrf():
+            return render_template("change_password.html", error="Security check failed. Refresh and try again."), 400
+        current_password = request.form.get("current_password", "")
+        new_password = request.form.get("new_password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        if new_password != confirm_password:
+            return render_template("change_password.html", error="New password and confirmation do not match."), 400
+        ok, msg = change_password(_db_path(), int(session.get("user_id")), current_password, new_password)
+        if not ok:
+            return render_template("change_password.html", error=msg), 400
+        _log_event("password_changed", user_id=session.get("user_id"))
+        return render_template("change_password.html", success="Password changed successfully.")
+    return render_template("change_password.html")
+
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password_page():
+    if request.method == "POST":
+        if not _require_csrf():
+            return render_template("forgot_password.html", error="Security check failed. Refresh and try again."), 400
+        ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown")
+        if not _rate_limit((ip, "forgot-password"), limit=6, window_s=60):
+            return render_template("forgot_password.html", error="Too many attempts. Please wait a minute."), 429
+        identifier = request.form.get("identifier", "")
+        token, recipient_email = request_password_reset(_db_path(), identifier)
+        reset_url = None
+        email_sent = False
+        if token:
+            reset_url = url_for("reset_password_page", token=token, _external=True)
+            try:
+                email_sent = _send_password_reset_email(recipient_email, reset_url)
+            except Exception as exc:
+                _log_event(
+                    "password_reset_email_failed",
+                    identifier=identifier,
+                    recipient_email=recipient_email,
+                    error=str(exc),
+                )
+            if not email_sent and reset_url:
+                # Dev fallback: keep reset links discoverable when SMTP is not configured.
+                _write_reset_link_log(recipient_email, reset_url)
+            _log_event("password_reset_requested", identifier=identifier, recipient_email=recipient_email)
+        public_link = reset_url if (_should_expose_reset_link() and reset_url) else None
+        return render_template(
+            "forgot_password.html",
+            success=(
+                "If an account exists, reset instructions have been sent."
+                if email_sent
+                else "If an account exists, reset instructions will be available shortly."
+            ),
+            reset_url=public_link,
+        )
+    return render_template("forgot_password.html")
+
+
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password_page(token: str):
+    if request.method == "POST":
+        if not _require_csrf():
+            return render_template("reset_password.html", token=token, error="Security check failed. Refresh and try again."), 400
+        new_password = request.form.get("new_password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        if new_password != confirm_password:
+            return render_template("reset_password.html", token=token, error="Password confirmation does not match."), 400
+        ok, msg = reset_password_with_token(_db_path(), token, new_password)
+        if not ok:
+            return render_template("reset_password.html", token=token, error=msg), 400
+        _log_event("password_reset_success")
+        return render_template("reset_password.html", token=token, success=msg)
+    return render_template("reset_password.html", token=token)
 
 
 @app.route("/")
@@ -433,6 +594,100 @@ def history_export():
     return send_file(out_path, as_attachment=True)
 
 
+@app.route("/history/export.xlsx")
+@login_required_page
+def history_export_excel():
+    u = _current_user()
+    with _connect_db() as conn:
+        data = pd.read_sql_query(
+            """
+            SELECT mode AS Mode,
+                   attendance AS Attendance,
+                   cat_score AS CAT_Score,
+                   assignment_score AS Assignment_Score,
+                   final_exam AS Final_Exam,
+                   prediction AS Prediction,
+                   confidence AS Confidence,
+                   created_at AS Created_At
+            FROM predictions
+            WHERE user_id = ?
+            ORDER BY id DESC
+            """,
+            conn,
+            params=(u["id"],),
+        )
+    out = io.BytesIO()
+    with pd.ExcelWriter(out, engine="openpyxl") as writer:
+        data.to_excel(writer, index=False, sheet_name="History")
+    out.seek(0)
+    filename = f"history_u{u['id']}_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.xlsx"
+    return send_file(
+        out,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
+@app.route("/history/export.pdf")
+@login_required_page
+def history_export_pdf():
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.pdfgen import canvas
+    except Exception:
+        return jsonify({"error": "PDF export dependency missing. Install reportlab."}), 500
+
+    u = _current_user()
+    with _connect_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT created_at, mode, attendance, cat_score, assignment_score, final_exam, prediction, confidence
+            FROM predictions
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 300
+            """,
+            (u["id"],),
+        ).fetchall()
+
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    y = height - 40
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(40, y, f"Prediction History Report - {u['username']}")
+    y -= 18
+    pdf.setFont("Helvetica", 9)
+    pdf.drawString(40, y, f"Generated: {datetime.now(UTC).isoformat()}")
+    y -= 24
+    pdf.drawString(40, y, "Time")
+    pdf.drawString(170, y, "Mode")
+    pdf.drawString(220, y, "Scores (A/CAT/ASS/FIN)")
+    pdf.drawString(410, y, "Pred")
+    pdf.drawString(460, y, "Conf")
+    y -= 12
+
+    for row in rows:
+        if y < 40:
+            pdf.showPage()
+            y = height - 40
+            pdf.setFont("Helvetica", 9)
+        pdf.drawString(40, y, str(row["created_at"])[:19])
+        pdf.drawString(170, y, str(row["mode"]))
+        scores = f"{row['attendance']}/{row['cat_score']}/{row['assignment_score']}/{row['final_exam']}"
+        pdf.drawString(220, y, scores[:33])
+        pdf.drawString(410, y, str(row["prediction"]))
+        conf = "-" if row["confidence"] is None else str(row["confidence"])
+        pdf.drawString(460, y, conf[:8])
+        y -= 12
+
+    pdf.save()
+    buffer.seek(0)
+    filename = f"history_u{u['id']}_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.pdf"
+    return send_file(buffer, as_attachment=True, download_name=filename, mimetype="application/pdf")
+
+
 @app.route("/my-api-key")
 @login_required_api
 def my_api_key():
@@ -454,7 +709,19 @@ def admin_page():
             """
         ).fetchone()
         recent_users = conn.execute(
-            "SELECT id, username, is_admin, is_active, created_at FROM users ORDER BY id DESC LIMIT 25"
+            """
+            SELECT id, username, is_admin, is_active, is_approved, created_at
+            FROM users ORDER BY id DESC LIMIT 25
+            """
+        ).fetchall()
+        pending_users = conn.execute(
+            """
+            SELECT id, username, created_at
+            FROM users
+            WHERE is_approved = 0
+            ORDER BY id DESC
+            LIMIT 100
+            """
         ).fetchall()
         daily = conn.execute(
             """
@@ -465,7 +732,56 @@ def admin_page():
             LIMIT 14
             """
         ).fetchall()
-    return render_template("admin.html", totals=totals, recent_users=recent_users, daily=daily)
+    return render_template("admin.html", totals=totals, recent_users=recent_users, pending_users=pending_users, daily=daily)
+
+
+@app.route("/admin/user/<int:user_id>/approve", methods=["POST"])
+@admin_required_page
+def admin_approve_user(user_id: int):
+    if not _require_csrf():
+        return redirect(url_for("admin_page"))
+    with _connect_db() as conn:
+        conn.execute(
+            """
+            UPDATE users
+            SET is_approved = 1, approved_by = ?, approved_at = ?, approval_note = NULL, is_active = 1
+            WHERE id = ?
+            """,
+            (
+                int(session.get("user_id")),
+                datetime.now(UTC).isoformat(),
+                int(user_id),
+            ),
+        )
+        conn.commit()
+    _log_event("admin_approve_user", actor=session.get("user_id"), target=user_id)
+    return redirect(url_for("admin_page"))
+
+
+@app.route("/admin/user/<int:user_id>/reject", methods=["POST"])
+@admin_required_page
+def admin_reject_user(user_id: int):
+    if not _require_csrf():
+        return redirect(url_for("admin_page"))
+    if int(user_id) == int(session.get("user_id", -1)):
+        return redirect(url_for("admin_page"))
+    with _connect_db() as conn:
+        conn.execute(
+            """
+            UPDATE users
+            SET is_approved = 0, is_active = 0, approved_by = ?, approved_at = ?, approval_note = ?
+            WHERE id = ?
+            """,
+            (
+                int(session.get("user_id")),
+                datetime.now(UTC).isoformat(),
+                "Rejected by admin",
+                int(user_id),
+            ),
+        )
+        conn.commit()
+    _log_event("admin_reject_user", actor=session.get("user_id"), target=user_id)
+    return redirect(url_for("admin_page"))
 
 
 @app.route("/admin/user/<int:user_id>/role", methods=["POST"])
@@ -537,6 +853,91 @@ def predict():
             "confidence": confidence,
             "explainability": explanation[:3],
             "rubric_explainability": rubric,
+        }
+    )
+
+
+@app.route("/predict/multi-subject", methods=["POST"])
+@login_required_api
+def predict_multi_subject():
+    """Accept subject-wise scores, aggregate, then run overall prediction."""
+    u = _current_user()
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Invalid or missing JSON body"}), 400
+    subjects = data.get("subjects")
+    if not isinstance(subjects, list) or not subjects:
+        return jsonify({"error": "Provide a non-empty 'subjects' array."}), 400
+    try:
+        attendance = float(data["Attendance"])
+        if attendance < 0 or attendance > 100:
+            raise ValueError("Attendance must be between 0 and 100.")
+    except (KeyError, ValueError, TypeError) as exc:
+        return jsonify({"error": f"Invalid attendance: {exc}"}), 400
+
+    subject_rows = []
+    cat_values = []
+    ass_values = []
+    fin_values = []
+    for idx, subj in enumerate(subjects, start=1):
+        if not isinstance(subj, dict):
+            return jsonify({"error": f"Subject item #{idx} must be an object."}), 400
+        name = str(subj.get("subject") or f"Subject {idx}")
+        try:
+            cat = float(subj["CAT_Score"])
+            ass = float(subj["Assignment_Score"])
+            fin = float(subj["Final_Exam"])
+        except (KeyError, ValueError, TypeError) as exc:
+            return jsonify({"error": f"Invalid subject input at #{idx}: {exc}"}), 400
+        if any(v < 0 or v > 100 for v in (cat, ass, fin)):
+            return jsonify({"error": f"Scores for {name} must be between 0 and 100."}), 400
+        weighted_total = round(cat * 0.15 + ass * 0.15 + fin * 0.70, 2)
+        subject_rows.append(
+            {
+                "subject": name,
+                "CAT_Score": cat,
+                "Assignment_Score": ass,
+                "Final_Exam": fin,
+                "weighted_total": weighted_total,
+            }
+        )
+        cat_values.append(cat)
+        ass_values.append(ass)
+        fin_values.append(fin)
+
+    row = {
+        "Attendance": round(attendance, 2),
+        "CAT_Score": round(float(np.mean(cat_values)), 2),
+        "Assignment_Score": round(float(np.mean(ass_values)), 2),
+        "Final_Exam": round(float(np.mean(fin_values)), 2),
+    }
+    features = np.array([[row[c] for c in REQUIRED_COLUMNS]])
+    prediction = model.predict(features)[0]
+    confidence = round(float(max(model.predict_proba(features)[0])) * 100, 2)
+    rubric = _rubric_explanation(row)
+    _store_prediction(
+        u["id"],
+        "multi_subject",
+        row,
+        str(prediction),
+        confidence,
+        payload_json=str({"subjects_count": len(subject_rows), "subjects": subject_rows}),
+    )
+    _log_event(
+        "multi_subject_prediction",
+        user_id=u["id"],
+        subject_count=len(subject_rows),
+        prediction=str(prediction),
+        confidence=confidence,
+    )
+    return jsonify(
+        {
+            "subjects": subject_rows,
+            "aggregate_features": row,
+            "prediction": prediction,
+            "confidence": confidence,
+            "rubric_explainability": rubric,
+            "note": "Overall prediction uses average CAT/Assignment/Final scores across subjects plus attendance.",
         }
     )
 

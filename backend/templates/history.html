@@ -13,6 +13,8 @@
     <h4 class="mb-0">My Prediction History</h4>
     <div>
       <a href="{{ url_for('history_export') }}" class="btn btn-sm btn-primary">Export CSV</a>
+      <a href="{{ url_for('history_export_excel') }}" class="btn btn-sm btn-success">Export Excel</a>
+      <a href="{{ url_for('history_export_pdf') }}" class="btn btn-sm btn-danger">Export PDF</a>
       <a href="{{ url_for('home') }}" class="btn btn-sm btn-outline-secondary">Back to Dashboard</a>
     </div>
   </div>

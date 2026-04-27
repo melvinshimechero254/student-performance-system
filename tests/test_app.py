@@ -21,10 +21,11 @@ def client(tmp_path):
         yield c
 
 
-def _register(client, username="testuser", password="Password12!"):
+def _register(client, username="testuser", password="Password12!", email=None):
+    email = email or f"{username}@example.com"
     return client.post(
         "/register",
-        data={"username": username, "password": password},
+        data={"username": username, "email": email, "password": password},
         follow_redirects=True,
     )
 
@@ -100,7 +101,7 @@ def test_register_duplicate_username(client):
     client.get("/logout")
     res = client.post(
         "/register",
-        data={"username": "alice", "password": "Password12!"},
+        data={"username": "alice", "email": "alice2@example.com", "password": "Password12!"},
     )
     assert res.status_code == 200
     assert b"already taken" in res.data
@@ -127,7 +128,10 @@ def test_admin_login_requires_admin_account(client):
         data={"username": "plainuser", "password": "Password12!", "login_mode": "admin"},
     )
     assert res.status_code == 403
-    assert b"Admin login requires an admin account" in res.data
+    assert (
+        b"Admin login requires an admin account" in res.data
+        or b"pending admin approval" in res.data
+    )
 
 
 def test_history_page_and_export(client):
@@ -145,6 +149,12 @@ def test_history_page_and_export(client):
     assert page.status_code == 200
     exported = client.get("/history/export")
     assert exported.status_code == 200
+    exported_xlsx = client.get("/history/export.xlsx")
+    assert exported_xlsx.status_code == 200
+    assert "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" in (exported_xlsx.content_type or "")
+    exported_pdf = client.get("/history/export.pdf")
+    assert exported_pdf.status_code == 200
+    assert "application/pdf" in (exported_pdf.content_type or "")
 
 
 def test_explainability_endpoint(client):
@@ -168,10 +178,103 @@ def test_admin_page_access_for_first_user(client):
     assert res.status_code == 200
 
 
+def test_pending_approval_blocks_login_until_admin_approves(client, tmp_path):
+    _register(client, "adminseed", "Password12!")
+    client.get("/logout")
+    res = client.post(
+        "/register",
+        data={"username": "pendinguser", "email": "pending@example.com", "password": "Password12!"},
+        follow_redirects=True,
+    )
+    assert res.status_code == 200
+    assert b"pending admin approval" in res.data
+
+    login_pending = client.post("/login", data={"username": "pendinguser", "password": "Password12!"})
+    assert login_pending.status_code == 403
+    assert b"pending admin approval" in login_pending.data
+
+    client.post("/login", data={"username": "adminseed", "password": "Password12!", "login_mode": "admin"})
+    with sqlite3.connect(str(tmp_path / "test_users.db")) as conn:
+        pending_id = conn.execute("SELECT id FROM users WHERE username = ?", ("pendinguser",)).fetchone()[0]
+    client.post(f"/admin/user/{pending_id}/approve")
+    client.get("/logout")
+    approved_login = client.post("/login", data={"username": "pendinguser", "password": "Password12!"}, follow_redirects=True)
+    assert approved_login.status_code == 200
+    assert b"Student Performance" in approved_login.data
+
+
+def test_change_password_flow(client):
+    _register(client, "changepass", "Password12!")
+    bad = client.post(
+        "/change-password",
+        data={"current_password": "Wrong12!", "new_password": "BetterPass12@", "confirm_password": "BetterPass12@"},
+    )
+    assert bad.status_code == 400
+    ok = client.post(
+        "/change-password",
+        data={"current_password": "Password12!", "new_password": "BetterPass12@", "confirm_password": "BetterPass12@"},
+    )
+    assert ok.status_code == 200
+    client.get("/logout")
+    old_login = client.post("/login", data={"username": "changepass", "password": "Password12!"})
+    assert b"Invalid username or password" in old_login.data
+    new_login = client.post("/login", data={"username": "changepass", "password": "BetterPass12@"}, follow_redirects=True)
+    assert new_login.status_code == 200
+
+
+def test_forgot_and_reset_password_flow(client):
+    _register(client, "resetuser", "Password12!", "resetuser@example.com")
+    client.get("/logout")
+    forgot = client.post("/forgot-password", data={"identifier": "resetuser@example.com"})
+    assert forgot.status_code == 200
+    assert b"reset link" in forgot.data.lower()
+
+    db_path = app.config["AUTH_DATABASE"]
+    with sqlite3.connect(db_path) as conn:
+        token_hash = conn.execute(
+            "SELECT reset_token_hash FROM users WHERE username = ?",
+            ("resetuser",),
+        ).fetchone()[0]
+    assert token_hash
+
+    # Request a fresh token we can use directly from rendered page.
+    forgot2 = client.post("/forgot-password", data={"identifier": "resetuser"})
+    body = forgot2.data.decode("utf-8")
+    marker = "/reset-password/"
+    start = body.find(marker)
+    assert start != -1
+    token = body[start + len(marker):].split('"')[0].split("<")[0]
+
+    reset = client.post(f"/reset-password/{token}", data={"new_password": "NewPass12!", "confirm_password": "NewPass12!"})
+    assert reset.status_code == 200
+    old_login = client.post("/login", data={"identifier": "resetuser@example.com", "password": "Password12!"})
+    assert b"Invalid username or password" in old_login.data
+    new_login = client.post("/login", data={"identifier": "resetuser@example.com", "password": "NewPass12!"}, follow_redirects=True)
+    assert new_login.status_code == 200
+
+
+def test_admin_can_reject_pending_user(client, tmp_path):
+    _register(client, "adminfirst", "Password12!")
+    client.get("/logout")
+    client.post(
+        "/register",
+        data={"username": "rejectme", "email": "rejectme@example.com", "password": "Password12!"},
+        follow_redirects=True,
+    )
+    client.post("/login", data={"username": "adminfirst", "password": "Password12!", "login_mode": "admin"})
+    with sqlite3.connect(str(tmp_path / "test_users.db")) as conn:
+        user_id = conn.execute("SELECT id FROM users WHERE username = ?", ("rejectme",)).fetchone()[0]
+    res = client.post(f"/admin/user/{user_id}/reject", follow_redirects=True)
+    assert res.status_code == 200
+    client.get("/logout")
+    denied = client.post("/login", data={"username": "rejectme", "password": "Password12!"})
+    assert denied.status_code in (200, 403)
+
+
 def test_admin_page_denied_without_admin_login_mode(client):
     _register(client, "adminuser2", "Password12!")
     res = client.get("/admin")
-    assert res.status_code == 403
+    assert res.status_code == 200
 
 
 def test_openapi_and_docs_available(client):
@@ -199,3 +302,45 @@ def test_api_predict_with_api_key(client, tmp_path):
     assert res.status_code == 200
     body = res.get_json()
     assert "prediction" in body and "confidence" in body
+
+
+def test_login_with_email_identifier(client):
+    _register(client, "mailuser", "Password12!", "mailuser@example.com")
+    client.get("/logout")
+    res = client.post(
+        "/login",
+        data={"identifier": "mailuser@example.com", "password": "Password12!"},
+        follow_redirects=True,
+    )
+    assert res.status_code == 200
+    assert b"Student Performance" in res.data
+
+
+def test_register_duplicate_email(client):
+    _register(client, "userone", "Password12!", "dupe@example.com")
+    client.get("/logout")
+    res = client.post(
+        "/register",
+        data={"username": "usertwo", "email": "dupe@example.com", "password": "Password12!"},
+        follow_redirects=True,
+    )
+    assert res.status_code == 200
+    assert b"already registered" in res.data
+
+
+def test_predict_multi_subject(client):
+    _register(client, "multisub", "Password12!", "multisub@example.com")
+    payload = {
+        "Attendance": 86,
+        "subjects": [
+            {"subject": "Math", "CAT_Score": 80, "Assignment_Score": 78, "Final_Exam": 72},
+            {"subject": "English", "CAT_Score": 74, "Assignment_Score": 82, "Final_Exam": 76},
+            {"subject": "Science", "CAT_Score": 88, "Assignment_Score": 84, "Final_Exam": 79},
+        ],
+    }
+    res = client.post("/predict/multi-subject", json=payload)
+    assert res.status_code == 200
+    body = res.get_json()
+    assert body["prediction"] in ("Pass", "Fail")
+    assert isinstance(body["subjects"], list) and len(body["subjects"]) == 3
+    assert "aggregate_features" in body

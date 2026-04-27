@@ -53,6 +53,7 @@ pytest tests/
 |--------|-------------|--------------------------|
 | GET    | `/`         | Dashboard UI             |
 | POST   | `/predict`  | Single student prediction|
+| POST   | `/predict/multi-subject`  | Multi-subject prediction (aggregated) |
 | POST   | `/upload`   | Bulk CSV prediction      |
 | GET    | `/download` | Download results CSV     |
 | GET    | `/history`  | User prediction history  |
@@ -73,6 +74,22 @@ pytest tests/
 }
 ```
 
+### `/predict/multi-subject` payload
+
+Use this when a learner has multiple subjects and you want one overall outcome.
+The API averages CAT, Assignment, and Final Exam across provided subjects, combines
+with Attendance, and returns one overall pass/fail prediction + confidence.
+
+```json
+{
+  "Attendance": 86,
+  "subjects": [
+    { "subject": "Math", "CAT_Score": 80, "Assignment_Score": 78, "Final_Exam": 72 },
+    { "subject": "English", "CAT_Score": 74, "Assignment_Score": 82, "Final_Exam": 76 }
+  ]
+}
+```
+
 ## Deployment Notes
 
 - Set a strong secret key in production:
@@ -84,3 +101,37 @@ pytest tests/
   - Avoid editing code directly on production servers.
 - Logs:
   - Structured app events are written to `backend/logs/app.log` with rotation.
+
+## Environment Configuration
+
+Copy `.env.example` to `.env` and set real values before deployment.
+
+```bash
+cp .env.example .env
+```
+
+Windows PowerShell:
+
+```powershell
+copy .env.example .env
+```
+
+### Required for production security
+
+- `FLASK_SECRET_KEY`
+  - Required. Use a strong random secret (at least 32 bytes).
+- `SHOW_RESET_LINKS`
+  - Keep `0` in production. Only set `1` for local demos/testing.
+
+### SMTP (forgot password email)
+
+Set these values to enable password reset emails:
+
+- `SMTP_HOST` (e.g. `smtp.gmail.com`, `smtp.office365.com`)
+- `SMTP_PORT` (default `587`)
+- `SMTP_USER`
+- `SMTP_PASSWORD`
+- `SMTP_SENDER` (from address; defaults to `SMTP_USER` if omitted)
+
+If SMTP is not configured, forgot-password requests will still be accepted,
+but reset links will not be emailed in production.
