@@ -159,43 +159,26 @@ def _should_expose_reset_link() -> bool:
 
 
 def _send_password_reset_email(recipient_email: str, reset_url: str) -> bool:
-    smtp_host = os.environ.get("SMTP_HOST", "").strip()
-    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
-    smtp_user = os.environ.get("SMTP_USER", "").strip()
-    smtp_password = os.environ.get("SMTP_PASSWORD", "")
-    smtp_sender = os.environ.get("SMTP_SENDER", smtp_user).strip()
-    smtp_use_ssl = os.environ.get("SMTP_USE_SSL", "0") == "1"
-    smtp_use_starttls = os.environ.get("SMTP_USE_STARTTLS", "1") == "1"
-    if not smtp_host or not smtp_sender:
+    api_key = os.environ.get("RESEND_API_KEY", "").strip()
+    if not api_key:
+        app.logger.error("RESEND_API_KEY not set")
         return False
-
-    msg = EmailMessage()
-    msg["Subject"] = "Password reset instructions"
-    msg["From"] = smtp_sender
-    msg["To"] = recipient_email
-    msg.set_content(
-        "A password reset was requested for your account.\n\n"
-        f"Use this link to reset your password:\n{reset_url}\n\n"
-        "If you did not request this, you can ignore this email."
-    )
-
-    context = ssl.create_default_context()
-    try:                                          # ← ADD THIS
-        if smtp_use_ssl:
-            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10, context=context) as smtp:
-                if smtp_user:
-                    smtp.login(smtp_user, smtp_password)
-                smtp.send_message(msg)
-        else:
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as smtp:
-                if smtp_use_starttls:
-                    smtp.starttls(context=context)
-                if smtp_user:
-                    smtp.login(smtp_user, smtp_password)
-                smtp.send_message(msg)
+    try:
+        import resend
+        resend.api_key = api_key
+        resend.Emails.send({
+            "from": "onboarding@resend.dev",
+            "to": recipient_email,
+            "subject": "Password reset instructions",
+            "text": (
+                "A password reset was requested for your account.\n\n"
+                f"Use this link to reset your password:\n{reset_url}\n\n"
+                "If you did not request this, you can ignore this email."
+            )
+        })
         return True
-    except Exception as exc:                      # ← ADD THIS
-        app.logger.error("SMTP send failed: %s", exc)
+    except Exception as exc:
+        app.logger.error("Resend email failed: %s", exc)
         return False
 
 
