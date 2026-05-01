@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lecturer Dashboard — Student Performance System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+{% include '_theme_script.html' %}
+  <style>
+    body { background: #eef2f7; }
+    header { background: #1e293b; color: white; padding: 15px; }
+    .risk-red    { border-left: 4px solid #dc3545; }
+    .risk-orange { border-left: 4px solid #fd7e14; }
+    .risk-yellow { border-left: 4px solid #ffc107; }
+    .stat-card { border-radius: 12px; }
+  </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center px-4 py-3">
+  <div>
+    <h5 class="mb-0"><i class="bi bi-person-video3 me-2"></i>Lecturer Dashboard</h5>
+    <small class="text-white-50">Welcome, {{ current_username }}</small>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('lecturer_enter_scores') }}" class="btn btn-sm btn-warning">
+      <i class="bi bi-pencil-square me-1"></i>Enter Scores
+    </a>
+    <a href="{{ url_for('change_password_page') }}" class="btn btn-sm btn-outline-light">
+      <i class="bi bi-key"></i>
+    </a>
+    <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-light">
+      <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+  </div>
+</header>
+
+<div class="container py-4">
+
+  <!-- Stats row -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card stat-card text-center p-3 shadow-sm">
+        <div class="fs-2 fw-bold text-primary">{{ total_students }}</div>
+        <small class="text-muted">Total Students</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card text-center p-3 shadow-sm">
+        <div class="fs-2 fw-bold text-danger">{{ at_risk|selectattr('risk_level','equalto','red')|list|length }}</div>
+        <small class="text-muted">🔴 Red Flag</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card text-center p-3 shadow-sm">
+        <div class="fs-2 fw-bold text-warning">{{ at_risk|selectattr('risk_level','in',['orange','yellow'])|list|length }}</div>
+        <small class="text-muted">🟡🟠 Monitored</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card text-center p-3 shadow-sm">
+        <div class="fs-2 fw-bold text-success">{{ interventions_this_month }}</div>
+        <small class="text-muted">Interventions This Month</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Courses -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header fw-semibold"><i class="bi bi-book me-2"></i>My Courses</div>
+    <div class="card-body">
+      {% if courses %}
+      <div class="row g-2">
+        {% for c in courses %}
+        <div class="col-md-4">
+          <div class="border rounded p-3">
+            <strong>{{ c.name }}</strong><br>
+            <small class="text-muted">{{ c.code }}</small>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-muted mb-0">No courses assigned. Contact admin.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- At-risk students -->
+  <div class="card shadow-sm">
+    <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-exclamation-triangle me-2 text-danger"></i>At-Risk Students</span>
+      <a href="{{ url_for('lecturer_enter_scores') }}" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-plus me-1"></i>Enter Scores
+      </a>
+    </div>
+    <div class="card-body p-0">
+      {% if at_risk %}
+      <div class="list-group list-group-flush">
+        {% for s in at_risk %}
+        <div class="list-group-item risk-{{ s.risk_level }}">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong>{{ s.username }}</strong>
+              {% if s.reg_number %}<span class="text-muted small ms-2">{{ s.reg_number }}</span>{% endif %}
+              <span class="badge ms-2
+                {% if s.risk_level == 'red' %}bg-danger
+                {% elif s.risk_level == 'orange' %}bg-warning text-dark
+                {% else %}bg-warning text-dark{% endif %}">
+                {% if s.risk_level == 'red' %}🔴 URGENT{% elif s.risk_level == 'orange' %}🟠 Attention{% else %}🟡 Monitor{% endif %}
+              </span>
+              <br>
+              <small class="text-muted">{{ s.course_name }} ({{ s.course_code }})</small>
+              {% if s.risk_updated_at %}
+              <small class="text-muted ms-2">· Flagged {{ s.risk_updated_at[:10] }}</small>
+              {% endif %}
+              {% if s.acknowledged_at %}
+              <small class="text-success ms-2">· Student acknowledged</small>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('lecturer_student_detail', student_id=s.id, course_id=s.course_id) }}"
+               class="btn btn-sm btn-primary ms-2">
+              <i class="bi bi-eye me-1"></i>View & Intervene
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="p-4 text-center text-muted">
+        <i class="bi bi-check-circle fs-2 text-success d-block mb-2"></i>
+        No at-risk students right now. Keep entering scores to monitor performance.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
