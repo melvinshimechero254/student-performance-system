@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Detail — Student Performance System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+{% include '_theme_script.html' %}
+  <style>
+    body { background: #eef2f7; }
+    header { background: #1e293b; color: white; padding: 15px; }
+  </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center px-4 py-3">
+  <div>
+    <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Student Detail</h5>
+    <small class="text-white-50">{{ course.name if course else '' }}</small>
+  </div>
+  <a href="{{ url_for('lecturer_dashboard') }}" class="btn btn-sm btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i>Back
+  </a>
+</header>
+
+<div class="container py-4">
+
+  <!-- Student info + risk -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col">
+          <h5 class="mb-0">{{ student.username }}</h5>
+          {% if student.reg_number %}
+          <small class="text-muted">Reg: {{ student.reg_number }}</small>
+          {% endif %}
+          {% if student.email %}
+          <small class="text-muted ms-3">{{ student.email }}</small>
+          {% endif %}
+        </div>
+        <div class="col-auto">
+          <span class="badge fs-6
+            {% if risk_level == 'red' %}bg-danger
+            {% elif risk_level == 'orange' %}bg-warning text-dark
+            {% elif risk_level == 'yellow' %}bg-warning text-dark
+            {% else %}bg-success{% endif %}">
+            {% if risk_level == 'red' %}🔴 URGENT — Intervene Now
+            {% elif risk_level == 'orange' %}🟠 Attention Needed
+            {% elif risk_level == 'yellow' %}🟡 Monitor
+            {% else %}✅ On Track{% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Scores -->
+    <div class="col-md-5">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-semibold"><i class="bi bi-bar-chart me-2"></i>Current Scores</div>
+        <div class="card-body">
+          <table class="table table-sm">
+            <tbody>
+              {% for cat in cats %}
+              <tr>
+                <td>CAT {{ cat.cat_number }}</td>
+                <td class="fw-bold">{{ cat.score }}/30
+                  {% if cat.score < 12 %}<span class="text-danger small">⚠️</span>{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              {% if feats %}
+              <tr class="table-light">
+                <td>CAT Average</td>
+                <td class="fw-bold">{{ feats.CAT_Average }}/30</td>
+              </tr>
+              <tr>
+                <td>Attendance</td>
+                <td class="fw-bold {{ 'text-danger' if feats.Attendance < 70 else '' }}">
+                  {{ feats.Attendance }}%
+                  {% if feats.Attendance < 70 %}<span class="small">⚠️ Exam eligibility at risk</span>{% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td>Assignment Score</td>
+                <td class="fw-bold">{{ feats.Assignment_Score }}%</td>
+              </tr>
+              <tr>
+                <td>Assignments Submitted</td>
+                <td class="fw-bold">{{ feats.Assignments_Submitted }}%</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prediction -->
+    <div class="col-md-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-semibold"><i class="bi bi-cpu me-2"></i>ML Prediction</div>
+        <div class="card-body">
+          <div class="row text-center mb-3">
+            <div class="col">
+              <div class="fs-2 fw-bold
+                {{ 'text-danger' if live_label == 'Fail' else 'text-warning' if live_label == 'At Risk' else 'text-success' }}">
+                {{ live_label }}
+              </div>
+              <small class="text-muted">{{ live_confidence }}% confidence</small>
+            </div>
+            {% if predicted_final is not none %}
+            <div class="col border-start">
+              <div class="fs-2 fw-bold">{{ predicted_final }}<span class="fs-6 text-muted">/70</span></div>
+              <small class="text-muted">Predicted Final Exam Score</small>
+              <br>
+              {% set needed = [35 - predicted_final, 0]|max %}
+              {% if needed > 0 %}
+              <small class="text-danger">Needs {{ needed|round(1) }} more marks to pass</small>
+              {% else %}
+              <small class="text-success">On track to pass</small>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+          <div class="alert alert-secondary py-2 small">
+            <i class="bi bi-info-circle me-1"></i>
+            This prediction uses only pre-exam data (attendance, CAT scores, assignments).
+            No final exam score was used.
+          </div>
+
+          <!-- Intervention form -->
+          {% if risk_level != 'none' %}
+          <hr>
+          <h6>📋 Log an Intervention</h6>
+          <form method="post" action="{{ url_for('lecturer_intervene') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="student_id" value="{{ student.id }}">
+            <input type="hidden" name="course_id" value="{{ course.id }}">
+            <div class="mb-2">
+              <label class="form-label small">Action Taken <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" name="action" required>
+                <option value="">— Select action —</option>
+                <option>Counselling session scheduled</option>
+                <option>Extra tutoring arranged</option>
+                <option>Email sent to student</option>
+                <option>Phone call made to student</option>
+                <option>Parent/guardian contacted</option>
+                <option>Referred to academic support office</option>
+                <option>One-on-one meeting held</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small">Outcome / Notes</label>
+              <input class="form-control form-control-sm" name="outcome"
+                     placeholder="e.g. Student agreed to attend extra classes">
+            </div>
+            <div class="mb-2 form-check">
+              <input class="form-check-input" type="checkbox" name="follow_up_needed" id="followUp">
+              <label class="form-check-label small" for="followUp">Follow-up needed</label>
+            </div>
+            <button class="btn btn-sm btn-danger w-100">
+              <i class="bi bi-check-circle me-1"></i>Log Intervention
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Previous interventions -->
+  {% if prev_interventions %}
+  <div class="card shadow-sm mt-4">
+    <div class="card-header fw-semibold"><i class="bi bi-clock-history me-2"></i>Intervention History</div>
+    <div class="card-body p-0">
+      <table class="table table-sm mb-0">
+        <thead><tr>
+          <th>Date</th><th>Action</th><th>Outcome</th><th>Follow-up</th>
+        </tr></thead>
+        <tbody>
+        {% for i in prev_interventions %}
+        <tr>
+          <td>{{ i.intervened_at[:10] }}</td>
+          <td>{{ i.action }}</td>
+          <td>{{ i.outcome or '—' }}</td>
+          <td>{{ '✅ Yes' if i.follow_up_needed else 'No' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+</body>
+</html>

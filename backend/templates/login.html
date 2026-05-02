@@ -3,77 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Log in — Student Performance Dashboard</title>
+  <title>Log in — Student Performance System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 {% include '_theme_script.html' %}
   <style>
-    [data-bs-theme="light"] body { background: #eef2f7; }
+    body { background: #eef2f7; }
     header { background: #1e293b; color: white; padding: 15px; text-align: center; }
-    .auth-card { max-width: 420px; margin: 2rem auto; }
+    .auth-card { max-width: 440px; margin: 2rem auto; }
+    .role-btn { cursor: pointer; transition: all .2s; border: 2px solid #dee2e6; }
+    .role-btn.active { border-color: #0d6efd; background: #e7f1ff; }
+    .role-icon { font-size: 1.6rem; }
   </style>
 </head>
 <body>
 <header>
-  <h3 class="mb-0">Student Performance Dashboard</h3>
+  <h3 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>Student Performance Prediction System</h3>
+  <small class="text-white-50">Technical University of Mombasa</small>
 </header>
 <div class="container py-4">
   <div class="card shadow-sm auth-card">
     <div class="card-body p-4">
-      <h5 class="card-title mb-3">Log in</h5>
+      <h5 class="card-title mb-1">Log in</h5>
+      <p class="text-muted small mb-3">Select your role then enter your credentials</p>
+
       {% if message %}
       <div class="alert alert-info py-2">{{ message }}</div>
       {% endif %}
       {% if error %}
       <div class="alert alert-danger py-2">{{ error }}</div>
       {% endif %}
+
+      <!-- Role selector -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">I am a:</label>
+        <div class="row g-2" id="roleSelector">
+          <div class="col-4">
+            <div class="role-btn rounded p-2 text-center active" data-role="student" onclick="selectRole('student',this)">
+              <div class="role-icon">🎓</div>
+              <small class="fw-semibold">Student</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="role-btn rounded p-2 text-center" data-role="lecturer" onclick="selectRole('lecturer',this)">
+              <div class="role-icon">👨‍🏫</div>
+              <small class="fw-semibold">Lecturer</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="role-btn rounded p-2 text-center" data-role="admin" onclick="selectRole('admin',this)">
+              <div class="role-icon">🛡️</div>
+              <small class="fw-semibold">Admin</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <form method="post" action="{{ url_for('login') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="next" value="{{ next_url or '' }}">
-        <input type="hidden" id="loginMode" name="login_mode" value="user">
+        <input type="hidden" id="roleInput" name="role" value="student">
+
         <div class="mb-3">
           <label class="form-label" for="identifier">Username or Email</label>
           <input class="form-control" id="identifier" name="identifier" autocomplete="username" required>
-          <div class="form-text">Quick log in using either your username or email address.</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="password">Password</label>
           <div class="input-group">
-            <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
-            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-              Show
-            </button>
+            <input class="form-control" id="password" name="password" type="password"
+                   autocomplete="current-password" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">Show</button>
           </div>
         </div>
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary w-100" onclick="setLoginMode('user')">Log in</button>
-          <button type="submit" class="btn btn-secondary w-100" onclick="setLoginMode('admin')">Admin Log in</button>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Log in</button>
         </div>
       </form>
-      <p class="mt-3 mb-0 text-center small text-secondary">
-        No account? <a href="{{ url_for('register') }}">Register</a>
+
+      <hr class="my-3">
+      <p class="mb-1 text-center small text-secondary">
+        No account? <a href="{{ url_for('register') }}">Register here</a>
       </p>
-      <p class="mt-2 mb-0 text-center small">
+      <p class="mb-0 text-center small">
         <a href="{{ url_for('forgot_password_page') }}">Forgot password?</a>
       </p>
     </div>
   </div>
 </div>
 <script>
-  (function () {
-    var toggle = document.getElementById('togglePassword');
-    var input = document.getElementById('password');
-    if (!toggle || !input) return;
-    toggle.addEventListener('click', function () {
-      var isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      toggle.textContent = isHidden ? 'Hide' : 'Show';
-    });
-  })();
-
-  function setLoginMode(mode) {
-    var input = document.getElementById('loginMode');
-    if (input) input.value = mode;
+  function selectRole(role, el) {
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('roleInput').value = role;
   }
+  document.getElementById('togglePassword').addEventListener('click', function() {
+    var inp = document.getElementById('password');
+    var hidden = inp.type === 'password';
+    inp.type = hidden ? 'text' : 'password';
+    this.textContent = hidden ? 'Hide' : 'Show';
+  });
 </script>
 </body>
 </html>

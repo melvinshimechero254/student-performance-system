@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enter Scores — Student Performance System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+{% include '_theme_script.html' %}
+  <style>
+    body { background: #eef2f7; }
+    header { background: #1e293b; color: white; padding: 15px; }
+  </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center px-4 py-3">
+  <div>
+    <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Enter Student Scores</h5>
+    <small class="text-white-50">Scores trigger automatic risk assessment</small>
+  </div>
+  <a href="{{ url_for('lecturer_dashboard') }}" class="btn btn-sm btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+  </a>
+</header>
+
+<div class="container py-4" style="max-width:640px">
+
+  {% if message %}
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i>{{ message }}
+  </div>
+  {% endif %}
+  {% if error %}
+  <div class="alert alert-danger">
+    <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+  </div>
+  {% endif %}
+
+  <div class="card shadow-sm">
+    <div class="card-header fw-semibold">Student Performance Entry</div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('lecturer_enter_scores') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="mb-3">
+          <label class="form-label">Course</label>
+          <select class="form-select" name="course_id" required>
+            <option value="">— Select course —</option>
+            {% for c in courses %}
+            <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Student Registration Number or Username</label>
+          <input class="form-control" name="student_id" placeholder="e.g. CT100/1234/2021" required>
+          <div class="form-text">The student must be enrolled in the selected course</div>
+        </div>
+
+        <hr>
+        <h6 class="text-muted mb-3">Academic Scores</h6>
+
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">CAT Number</label>
+            <select class="form-select" name="cat_number">
+              <option value="1">CAT 1</option>
+              <option value="2">CAT 2</option>
+              <option value="3">CAT 3</option>
+              <option value="4">CAT 4</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">CAT Score <span class="text-muted">(out of 30)</span></label>
+            <input class="form-control" name="cat_score" type="number"
+                   min="0" max="30" step="0.5" placeholder="0 – 30" required>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <div class="col-6">
+            <label class="form-label">Attendance <span class="text-muted">(%)</span></label>
+            <input class="form-control" name="attendance" type="number"
+                   min="0" max="100" step="1" placeholder="0 – 100" required>
+            <div class="form-text">Below 70% = exam eligibility at risk</div>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Assignment Score <span class="text-muted">(%)</span></label>
+            <input class="form-control" name="assignment_score" type="number"
+                   min="0" max="100" step="0.5" placeholder="0 – 100" required>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-3">
+          <label class="form-label">Assignments Submitted <span class="text-muted">(%)</span></label>
+          <input class="form-control" name="assignments_submitted" type="number"
+                 min="0" max="100" step="1" placeholder="100" value="100">
+          <div class="form-text">What % of set assignments has the student submitted?</div>
+        </div>
+
+        <div class="d-grid mt-3">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-cpu me-2"></i>Save Scores & Run Prediction
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mt-3 border-info">
+    <div class="card-body">
+      <h6><i class="bi bi-info-circle me-2 text-info"></i>How risk levels work</h6>
+      <ul class="mb-0 small">
+        <li>🟡 <strong>Yellow</strong> — Attendance below 75% or CAT average below 12/30</li>
+        <li>🟠 <strong>Orange</strong> — ML model predicts At Risk or Fail</li>
+        <li>🔴 <strong>Red</strong> — ML predicts Fail AND attendance below 70% or CAT below 9/30</li>
+        <li>✅ <strong>None</strong> — Student is on track</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

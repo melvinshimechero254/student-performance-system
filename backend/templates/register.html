@@ -3,51 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Register — Student Performance Dashboard</title>
+  <title>Register — Student Performance System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 {% include '_theme_script.html' %}
   <style>
-    [data-bs-theme="light"] body { background: #eef2f7; }
+    body { background: #eef2f7; }
     header { background: #1e293b; color: white; padding: 15px; text-align: center; }
-    .auth-card { max-width: 420px; margin: 2rem auto; }
+    .auth-card { max-width: 480px; margin: 2rem auto; }
+    .role-btn { cursor: pointer; transition: all .2s; border: 2px solid #dee2e6; }
+    .role-btn.active { border-color: #0d6efd; background: #e7f1ff; }
+    .role-icon { font-size: 1.6rem; }
   </style>
 </head>
 <body>
 <header>
-  <h3 class="mb-0">Student Performance Dashboard</h3>
+  <h3 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>Student Performance Prediction System</h3>
+  <small class="text-white-50">Technical University of Mombasa</small>
 </header>
 <div class="container py-4">
   <div class="card shadow-sm auth-card">
     <div class="card-body p-4">
-      <h5 class="card-title mb-3">Create account</h5>
+      <h5 class="card-title mb-1">Create Account</h5>
+      <p class="text-muted small mb-3">All accounts require admin approval before first login</p>
+
       {% if error %}
       <div class="alert alert-danger py-2">{{ error }}</div>
       {% endif %}
+
+      <!-- Role selector -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">I am registering as a:</label>
+        <div class="row g-2" id="roleSelector">
+          <div class="col-4">
+            <div class="role-btn rounded p-2 text-center active" data-role="student" onclick="selectRole('student',this)">
+              <div class="role-icon">🎓</div>
+              <small class="fw-semibold">Student</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="role-btn rounded p-2 text-center" data-role="lecturer" onclick="selectRole('lecturer',this)">
+              <div class="role-icon">👨‍🏫</div>
+              <small class="fw-semibold">Lecturer</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="role-btn rounded p-2 text-center" data-role="admin" onclick="selectRole('admin',this)">
+              <div class="role-icon">🛡️</div>
+              <small class="fw-semibold">Admin</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <form method="post" action="{{ url_for('register') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" id="roleInput" name="role" value="student">
+
+        <!-- Registration number (students only) -->
+        <div class="mb-3" id="regNumberField">
+          <label class="form-label" for="reg_number">Registration Number</label>
+          <input class="form-control" id="reg_number" name="reg_number"
+                 placeholder="e.g. CT100/1234/2021" autocomplete="off">
+          <div class="form-text">Required for students — used to link your account to course records</div>
+        </div>
+
         <div class="mb-3">
           <label class="form-label" for="username">Username</label>
-          <input class="form-control" id="username" name="username" autocomplete="username" required
-                 pattern="[a-zA-Z0-9_]{3,32}" title="3–32 characters: letters, numbers, underscore">
+          <input class="form-control" id="username" name="username"
+                 placeholder="3–32 characters, letters/numbers/underscore" autocomplete="username" required>
         </div>
         <div class="mb-3">
-          <label class="form-label" for="email">Email</label>
-          <input class="form-control" id="email" name="email" type="email" autocomplete="email" required>
-          <div class="form-text">Used for password reset and email-based login.</div>
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-control" id="email" name="email" type="email"
+                 placeholder="your@email.com" autocomplete="email" required>
         </div>
         <div class="mb-3">
           <label class="form-label" for="password">Password</label>
-          <input class="form-control" id="password" name="password" type="password" autocomplete="new-password" required
-                 minlength="8">
-          <div class="form-text">At least 8 characters.</div>
+          <div class="input-group">
+            <input class="form-control" id="password" name="password" type="password"
+                   autocomplete="new-password" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">Show</button>
+          </div>
+          <div class="form-text">Min 8 characters — include uppercase, lowercase, number, symbol</div>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Register</button>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success">Register</button>
+        </div>
       </form>
-      <p class="mt-3 mb-0 text-center small text-secondary">
+
+      <hr class="my-3">
+      <p class="mb-0 text-center small text-secondary">
         Already have an account? <a href="{{ url_for('login') }}">Log in</a>
       </p>
     </div>
   </div>
 </div>
+<script>
+  function selectRole(role, el) {
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('roleInput').value = role;
+    // show/hide reg number field
+    document.getElementById('regNumberField').style.display = role === 'student' ? 'block' : 'none';
+  }
+  document.getElementById('togglePassword').addEventListener('click', function() {
+    var inp = document.getElementById('password');
+    var hidden = inp.type === 'password';
+    inp.type = hidden ? 'text' : 'password';
+    this.textContent = hidden ? 'Hide' : 'Show';
+  });
+</script>
 </body>
 </html>
